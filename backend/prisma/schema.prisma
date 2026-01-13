@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model USER {
+  id       String  @id @default(uuid())
+  fullName String
+  email    String  @unique
+  password String
+  verified Boolean @default(false)
+
+  totalStorage Int @default(10000000)
+  usedStorage  Int @default(0)
+
+  files   FILE[]
+  folders FOLDER[] 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FOLDER {
+  id   String @id @default(uuid())
+  name String
+
+  parentFolderId String?
+  parentFolder   FOLDER?  @relation("FolderHierarchy", fields: [parentFolderId], references: [id])
+  subFolders     FOLDER[] @relation("FolderHierarchy")
+
+  userId String
+  user   USER   @relation(fields: [userId], references: [id])
+
+  files FILE[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FILE {
+  id       String @id @default(uuid())
+  name     String
+  size     Int
+  key      String @unique
+  mimeType String
+
+  parentFolderId String?
+  parentFolder   FOLDER? @relation(fields: [parentFolderId], references: [id])
+
+  userId String
+  user   USER   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

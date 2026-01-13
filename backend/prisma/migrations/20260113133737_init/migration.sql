@@ -1,0 +1,59 @@
+-- CreateTable
+CREATE TABLE "USER" (
+    "id" TEXT NOT NULL,
+    "fullName" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "verified" BOOLEAN NOT NULL DEFAULT false,
+    "totalStorage" INTEGER NOT NULL DEFAULT 10000000,
+    "usedStorage" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "USER_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "FOLDER" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "parentFolderId" TEXT,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "FOLDER_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "FILE" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "size" INTEGER NOT NULL,
+    "key" TEXT NOT NULL,
+    "mimeType" TEXT NOT NULL,
+    "parentFolderId" TEXT,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "FILE_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "USER_email_key" ON "USER"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "FILE_key_key" ON "FILE"("key");
+
+-- AddForeignKey
+ALTER TABLE "FOLDER" ADD CONSTRAINT "FOLDER_parentFolderId_fkey" FOREIGN KEY ("parentFolderId") REFERENCES "FOLDER"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "FOLDER" ADD CONSTRAINT "FOLDER_userId_fkey" FOREIGN KEY ("userId") REFERENCES "USER"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "FILE" ADD CONSTRAINT "FILE_parentFolderId_fkey" FOREIGN KEY ("parentFolderId") REFERENCES "FOLDER"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "FILE" ADD CONSTRAINT "FILE_userId_fkey" FOREIGN KEY ("userId") REFERENCES "USER"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
