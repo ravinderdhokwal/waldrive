@@ -1,9 +1,8 @@
-import dotenv from "dotenv"
-dotenv.config({ path: "./.env" });
 import cors from "cors"
 import cookieParser from "cookie-parser";
 import express, { json, urlencoded } from "express";
 import authRoutes from "./routes/auth.routes.js";
+import folderRoutes from "./routes/folder.routes.js";
 
 // initializing the app
 const app = express();
@@ -28,5 +27,7 @@ const api_version = `/api/v1`
 // auth routes
 app.use(`${api_version}/auth`, authRoutes);
 
+// folder routes
+app.use(`${api_version}/folders`, folderRoutes);
 
 export default app;
