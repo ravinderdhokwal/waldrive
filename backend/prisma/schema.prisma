@@ -8,53 +8,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model USER {
+model User {
   id       String  @id @default(uuid())
   fullName String
   email    String  @unique
   password String
   verified Boolean @default(false)
 
-  totalStorage Int @default(10000000)
-  usedStorage  Int @default(0)
+  totalStorage BigInt @default(10000000)
+  usedStorage  BigInt @default(0)
 
-  files   FILE[]
-  folders FOLDER[] 
+  files   File[]
+  folders Folder[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model FOLDER {
+model Folder {
   id   String @id @default(uuid())
   name String
 
   parentFolderId String?
-  parentFolder   FOLDER?  @relation("FolderHierarchy", fields: [parentFolderId], references: [id])
-  subFolders     FOLDER[] @relation("FolderHierarchy")
+  parentFolder   Folder?  @relation("FolderHierarchy", fields: [parentFolderId], references: [id])
+  subFolders     Folder[] @relation("FolderHierarchy")
 
   userId String
-  user   USER   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
-  files FILE[]
+  files File[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([parentFolderId])
 }
 
-model FILE {
+model File {
   id       String @id @default(uuid())
   name     String
-  size     Int
-  key      String @unique
+  size     BigInt
+  key      String
   mimeType String
 
   parentFolderId String?
-  parentFolder   FOLDER? @relation(fields: [parentFolderId], references: [id])
+  parentFolder   Folder? @relation(fields: [parentFolderId], references: [id])
 
   userId String
-  user   USER   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([parentFolderId])
+  @@unique([userId, key])
 }
