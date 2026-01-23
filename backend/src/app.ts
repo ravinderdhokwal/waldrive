@@ -19,6 +19,9 @@ app.use(json({ limit: "16kb" }));
 // parsing url encoded data
 app.use(urlencoded({ extended: true, limit: "16kb" }));
 
+// serving static files
+app.use(express.static("public"))
+
 // parsing cookies
 app.use(cookieParser());
 
