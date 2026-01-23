@@ -3,7 +3,6 @@ import cookieParser from "cookie-parser";
 import express, { json, urlencoded } from "express";
 import authRoutes from "./routes/auth.routes.js";
 import folderRoutes from "./routes/folder.routes.js";
-import fileRoutes from "./routes/file.routes.js";
 
 // initializing the app
 const app = express();
@@ -33,8 +32,5 @@ app.use(`${api_version}/auth`, authRoutes);
 
 // folder routes
 app.use(`${api_version}/folders`, folderRoutes);
-
-// file routes
-app.use(`${api_version}/files`, fileRoutes);
 
 export default app;
