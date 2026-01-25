@@ -10,6 +10,17 @@ export class AUTH_MESSAGE {
     static readonly USER_SIGNED_UP = "User signed up successfully";
 }
 
+export class USER_MESSAGE {
+    // Error Messages
+    static readonly USER_NOT_FOUND = "User not found.";
+    static readonly NAME_REQUIRED = "Name is required.";
+
+    // Success Messages
+    static readonly USER_PROFILE_FETCHED = "User profile fetched successfully.";
+    static readonly USER_PROFILE_UPDATED = "User profile updated successfully.";
+    static readonly STORAGE_INFO_FETCHED = "Storage information fetched successfully.";
+}
+
 export class FOLDER_MESSAGE {
     // Error Messages
     static readonly FOLDER_NAME_REQUIRED = "Folder name is required.";
