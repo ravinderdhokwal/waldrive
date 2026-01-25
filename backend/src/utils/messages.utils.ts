@@ -23,3 +23,18 @@ export class FOLDER_MESSAGE {
     static readonly FOLDER_RENAMED = "Folder renamed successfully.";
     static readonly FOLDER_DELETED = "Folder deleted successfully.";
 }
+
+export class FILE_MESSAGE {
+    // Error Messages
+    static readonly FILE_NOT_FOUND = "File not found.";
+    static readonly UNAUTHORIZED_ACCESS = "Unauthorized access to file.";
+    static readonly FILE_DOWNLOAD_ERROR = "Error downloading file.";
+    static readonly INSUFFICIENT_STORAGE = "Insufficient storage.";
+    static readonly NO_FILES_FOUND = "No files found.";
+
+    // Success Messages
+    static readonly FILE_UPLOADED = "File uploaded successfully.";
+    static readonly FILES_FETCHED = "Files fetched successfully.";
+    static readonly FILE_RENAMED = "File renamed successfully.";
+    static readonly FILE_DELETED = "File deleted successfully.";
+}
