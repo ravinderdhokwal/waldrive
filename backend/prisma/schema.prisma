@@ -15,8 +15,8 @@ model User {
   password String
   verified Boolean @default(false)
 
-  totalStorage BigInt @default(10000000)
-  usedStorage  BigInt @default(0)
+  totalStorage Int @default(10000000)
+  usedStorage  Int @default(0)
 
   files   File[]
   folders Folder[]

@@ -43,7 +43,6 @@ export const fetchStorageInfo = asyncHandler(async (req, res) => {
     const userId = req.user?.id as string;
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
-
     if (!user) {
         return ApiResponse.error(res, 404, AUTH_MESSAGE.USER_NOT_FOUND);
     }
