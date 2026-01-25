@@ -48,7 +48,7 @@ model Folder {
 model File {
   id       String @id @default(uuid())
   name     String
-  size     BigInt
+  size     Int
   key      String
   mimeType String
 
