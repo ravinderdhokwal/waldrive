@@ -2,6 +2,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser";
 import express, { json, urlencoded } from "express";
 import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
 import folderRoutes from "./routes/folder.routes.js";
 import fileRoutes from "./routes/file.routes.js";
 
@@ -30,6 +31,9 @@ const api_version = `/api/v1`
 
 // auth routes
 app.use(`${api_version}/auth`, authRoutes);
+
+// user routes
+app.use(`${api_version}/users`, userRoutes);
 
 // folder routes
 app.use(`${api_version}/folders`, folderRoutes);
