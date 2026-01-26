@@ -1,4 +1,4 @@
-import prisma from "../configs/prisma.configs.js";
+import { UserService } from "../services/user.services.js";
 import { asyncHandler } from "../utils/handler.utils.js";
 import { AUTH_MESSAGE, USER_MESSAGE } from "../utils/messages.utils.js";
 import { ApiResponse } from "../utils/response.utils.js";
@@ -6,7 +6,7 @@ import { ApiResponse } from "../utils/response.utils.js";
 export const fetchUserProfile = asyncHandler(async (req, res) => {
     const userId = req.user?.id as string;
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const user = await UserService.findUserById(userId);
     if (!user) {
         return ApiResponse.error(res, 404, AUTH_MESSAGE.USER_NOT_FOUND);
     }
@@ -26,15 +26,12 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
         return ApiResponse.error(res, 400, USER_MESSAGE.NAME_REQUIRED);
     }
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const user = await UserService.findUserById(userId);
     if (!user) {
         return ApiResponse.error(res, 404, AUTH_MESSAGE.USER_NOT_FOUND);
     }
 
-    await prisma.user.update({
-        where: { id: userId },
-        data: { fullName: name },
-    });
+    await UserService.updateUserProfile(userId, name);
 
     return ApiResponse.success(res, USER_MESSAGE.USER_PROFILE_UPDATED);
 });
@@ -42,7 +39,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 export const fetchStorageInfo = asyncHandler(async (req, res) => {
     const userId = req.user?.id as string;
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const user = await UserService.findUserById(userId);
     if (!user) {
         return ApiResponse.error(res, 404, AUTH_MESSAGE.USER_NOT_FOUND);
     }
