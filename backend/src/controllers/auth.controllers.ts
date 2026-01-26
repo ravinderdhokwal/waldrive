@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import prisma from "../configs/prisma.configs.js";
 import { asyncHandler } from "../utils/handler.utils.js";
 import { ApiResponse } from "../utils/response.utils.js";
 import { AUTH_MESSAGE } from "../utils/messages.utils.js";
 import type { CookieOptions } from "express-serve-static-core";
+import { UserService } from "../services/user.services.js";
 
 export const signUp = asyncHandler(async (req, res) => {
 
@@ -14,14 +14,14 @@ export const signUp = asyncHandler(async (req, res) => {
         return ApiResponse.error(res, 400, AUTH_MESSAGE.ALL_FIELDS_REQUIRED);
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await UserService.findUserByEmail(email);
     if (user != null) {
         return ApiResponse.error(res, 400, AUTH_MESSAGE.USER_ALREADY_EXISTS);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({ data: { fullName, email, password: hashedPassword } });
+    await UserService.createUser({ fullName, email, password: hashedPassword });
 
     return ApiResponse.success(res, AUTH_MESSAGE.USER_SIGNED_UP, null, 201);
 });
@@ -33,7 +33,7 @@ export const signIn = asyncHandler(async (req, res) => {
         return ApiResponse.error(res, 400, AUTH_MESSAGE.ALL_FIELDS_REQUIRED);
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await UserService.findUserByEmail(email);
     if (user == null) {
         return ApiResponse.error(res, 400, AUTH_MESSAGE.USER_NOT_FOUND);
     }
@@ -65,7 +65,6 @@ export const signIn = asyncHandler(async (req, res) => {
 });
 
 export const signOut = asyncHandler(async (req, res) => {
-
     const options: CookieOptions = {
         httpOnly: true,
         secure: true,
