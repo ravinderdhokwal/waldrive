@@ -1,4 +1,3 @@
-import prisma from "../configs/prisma.configs.js";
 import { FolderService } from "../services/folder.services.js";
 import { asyncHandler } from "../utils/handler.utils.js";
 import { FOLDER_MESSAGE } from "../utils/messages.utils.js";
@@ -6,7 +5,7 @@ import { ApiResponse } from "../utils/response.utils.js";
 
 export const createFolder = asyncHandler(async (req, res) => {
     const folderName = req.body?.folderName as string;
-    const parentFolderId = req.body?.parentFolderId as string | null;
+    const parentFolderId = req.body?.parentFolderId as string ?? null;
     const userId = req.user?.id as string;
     
     if (!folderName) {
@@ -20,8 +19,8 @@ export const createFolder = asyncHandler(async (req, res) => {
         }
     }
 
-    const folder = await FolderService.findFoldersByNameAndParent(folderName, parentFolderId);
-    if (folder.length > 0) {
+    const duplicateFolder = await FolderService.searchForDuplicateFolder(folderName, parentFolderId, userId);
+    if (duplicateFolder) {
         return ApiResponse.error(res, 400, FOLDER_MESSAGE.FOLDER_ALREADY_EXISTS);
     }
 
@@ -46,12 +45,13 @@ export const fetchFolders = asyncHandler(async (req, res) => {
         return ApiResponse.error(res, 400, FOLDER_MESSAGE.FOLDER_NOT_FOUND);
     }
 
-    const folders = await FolderService.fetchFoldersByParentFolderId(parentFolderId);
+    const folders = await FolderService.fetchChildFolders(parentFolderId);
 
     return ApiResponse.success(res, FOLDER_MESSAGE.FOLDERS_FETCHED, folders);
 });
 
 export const renameFolder = asyncHandler(async (req, res) => {
+    const userId = req.user?.id as string;
     const folderId = req.params.id as string;
     const { newFolderName } = req.body;
     
@@ -64,8 +64,8 @@ export const renameFolder = asyncHandler(async (req, res) => {
         return ApiResponse.error(res, 400, FOLDER_MESSAGE.FOLDER_NOT_FOUND);
     }
 
-    const existingFolder = await FolderService.findFoldersByNameAndParent(newFolderName, folder.parentFolderId);
-    if (existingFolder.length > 0) {
+    const duplicateFolder = await FolderService.searchForDuplicateFolder(newFolderName, folder.parentFolderId, userId);
+    if (duplicateFolder) {
         return ApiResponse.error(res, 400, FOLDER_MESSAGE.FOLDER_ALREADY_EXISTS);
     }
 
@@ -82,7 +82,7 @@ export const deleteFolder = asyncHandler(async (req, res) => {
     }
 
     const deleteFolderContent = async (folderId: string) => {
-        const subFolders = await FolderService.fetchFoldersByParentFolderId(folderId);
+        const subFolders = await FolderService.fetchChildFolders(folderId);
 
         for (const subFolder of subFolders) {
             await deleteFolderContent(subFolder.id);
