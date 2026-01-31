@@ -85,9 +85,12 @@ R2_BUCKET_NAME=your_bucket_name
 
 ---
 
-## 🛠️ Setup & Installation
+## 🛠️ Setup & Installation for backend
 
 ```bash
+# Change directory to backend
+cd ./backend
+
 # Install dependencies
 npm install
 
@@ -164,7 +167,8 @@ WalDrive is designed to demonstrate **real‑world backend engineering**:
 
 ---
 
-**Author**: Ravinder
+**Author**: Ravinder Kumar
+
 **Project**: WalDrive
 
 
