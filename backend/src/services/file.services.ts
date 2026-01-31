@@ -26,7 +26,7 @@ export class FileService {
         return await prisma.file.findMany({ where: { AND: { userId, parentFolderId: null } }, orderBy: { name: "asc" } });
     }
 
-    static async fetchFilesByParentFolderId(parentFolderId: string): Promise<File[]> {
+    static async fetchChildFiles(parentFolderId: string): Promise<File[]> {
         return await prisma.file.findMany({ where:  { parentFolderId }, orderBy: { name: "asc" } });
     }
 
@@ -39,5 +39,17 @@ export class FileService {
 
     static async deleteFile(fileId: string): Promise<File> {
         return await prisma.file.delete({ where: { id: fileId } });
+    }
+
+    static async searchForDuplicateFiles(fileName: string, parentFolderId: string | null, userId: string): Promise<File | null> {
+        return await prisma.file.findFirst({
+            where: {
+                AND: {
+                    name: fileName,
+                    parentFolderId,
+                    userId
+                }
+            }
+        });
     }
 }

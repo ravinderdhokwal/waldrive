@@ -42,6 +42,8 @@ export class FILE_MESSAGE {
     static readonly FILE_DOWNLOAD_ERROR = "Error downloading file.";
     static readonly INSUFFICIENT_STORAGE = "Insufficient storage.";
     static readonly NO_FILES_FOUND = "No files found.";
+    static readonly DUPLICATE_FILE = "File already exists with the same name.";
+    static readonly INVALID_FILE_NAME = "Invalid file name.";
 
     // Success Messages
     static readonly FILE_UPLOADED = "File uploaded successfully.";

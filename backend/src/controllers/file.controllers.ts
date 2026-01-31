@@ -11,7 +11,7 @@ import { FileService } from "../services/file.services.js";
 
 export const uploadFile = asyncHandler(async (req, res) => {
     const userId = req.user?.id as string;
-    const parentFolderId = req.body?.parentFolderId as string | null;
+    const parentFolderId = req.body?.parentFolderId as string ?? null;
 
     const file = req.file;
     if (!file) {
@@ -36,6 +36,12 @@ export const uploadFile = asyncHandler(async (req, res) => {
     if (file.size > availableStorage) {
         fs.unlinkSync(file.path);
         return ApiResponse.error(res, 400, FILE_MESSAGE.INSUFFICIENT_STORAGE);
+    }
+
+    const duplicateFile = await FileService.searchForDuplicateFiles(file.originalname, parentFolderId, userId);
+    if (duplicateFile) {
+        fs.unlinkSync(file.path);
+        return ApiResponse.error(res, 400, FILE_MESSAGE.DUPLICATE_FILE);
     }
 
     const key = `users/${userId}/${Date.now()}-${file.originalname}`;
@@ -63,12 +69,12 @@ export const fetchRootFiles = asyncHandler(async (req, res) => {
 export const fetchFiles = asyncHandler(async (req, res) => {
     const parentFolderId = req.params?.parentFolderId as string;
 
-    const parentFolder = await prisma.folder.findUnique({ where: { id: parentFolderId } });
+    const parentFolder = await FolderService.findFolderById(parentFolderId);
     if (!parentFolder) {
         return ApiResponse.error(res, 400, FOLDER_MESSAGE.FOLDER_NOT_FOUND);
     }
 
-    const files = await FileService.fetchFilesByParentFolderId(parentFolderId);
+    const files = await FileService.fetchChildFiles(parentFolderId);
     if (files.length === 0) {
         return ApiResponse.success(res, FILE_MESSAGE.NO_FILES_FOUND);
     }
@@ -100,8 +106,13 @@ export const streamFile = asyncHandler(async (req, res) => {
 });
 
 export const renameFile = asyncHandler(async (req, res) => {
+    const userId = req.user?.id as string;
     const id = req.params?.id as string;
     const newName = req.body?.name as string;
+
+    if (!newName) {
+        return ApiResponse.error(res, 400, FILE_MESSAGE.INVALID_FILE_NAME);
+    }
 
     if (!id) {
         return ApiResponse.error(res, 400, FILE_MESSAGE.FILE_NOT_FOUND);
@@ -110,6 +121,11 @@ export const renameFile = asyncHandler(async (req, res) => {
     const file = await FileService.findFileById(id);
     if (!file) {
         return ApiResponse.error(res, 404, FILE_MESSAGE.FILE_NOT_FOUND);
+    }
+
+    const duplicateFile = await FileService.searchForDuplicateFiles(newName, file.parentFolderId, userId);
+    if (duplicateFile) {
+        return ApiResponse.error(res, 400, FILE_MESSAGE.DUPLICATE_FILE);
     }
 
     const updatedFile = await FileService.renameFile(id, newName);
@@ -134,7 +150,7 @@ export const deleteFile = asyncHandler(async (req, res) => {
 
     await UserService.decrementUsedStorage(userId, file.size);
 
-    await prisma.file.delete({ where: { id }});
+    await FileService.deleteFile(id);
 
     return ApiResponse.success(res, FILE_MESSAGE.FILE_DELETED);
 });
