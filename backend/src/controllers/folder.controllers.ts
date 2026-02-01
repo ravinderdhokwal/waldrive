@@ -53,9 +53,9 @@ export const fetchFolders = asyncHandler(async (req, res) => {
 export const renameFolder = asyncHandler(async (req, res) => {
     const userId = req.user?.id as string;
     const folderId = req.params.id as string;
-    const { newFolderName } = req.body;
+    const { folderName } = req.body;
     
-    if (!newFolderName) {
+    if (!folderName) {
         return ApiResponse.error(res, 400, FOLDER_MESSAGE.FOLDER_NAME_REQUIRED);
     }
 
@@ -64,12 +64,12 @@ export const renameFolder = asyncHandler(async (req, res) => {
         return ApiResponse.error(res, 400, FOLDER_MESSAGE.FOLDER_NOT_FOUND);
     }
 
-    const duplicateFolder = await FolderService.searchForDuplicateFolder(newFolderName, folder.parentFolderId, userId);
+    const duplicateFolder = await FolderService.searchForDuplicateFolder(folderName, folder.parentFolderId, userId);
     if (duplicateFolder) {
         return ApiResponse.error(res, 400, FOLDER_MESSAGE.FOLDER_ALREADY_EXISTS);
     }
 
-    const renamedFolder = await FolderService.renameFolder(folderId, newFolderName);
+    const renamedFolder = await FolderService.renameFolder(folderId, folderName);
 
     return ApiResponse.success(res, FOLDER_MESSAGE.FOLDER_RENAMED, renamedFolder);
 });
