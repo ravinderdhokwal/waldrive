@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-/* ================= AUTH ================= */
-
+// AUTH ZOD SCHEMAS
 export const signupSchema = z.object({
     fullName: z.string().min(2, "Name must be at least 2 characters long"),
     email: z.email(),
@@ -18,24 +17,11 @@ export const signinSchema = z.object({
     password: z.string().min(8, "Password must be at least 8 characters long")
 });
 
-/* ================= FOLDERS ================= */
 
+// FOLDERS ZOD SCHEMA
 export const createFolderSchema = z.object({
     folderName: z.string()
     .min(2, "Folder name must be at least 2 characters long")
     .max(20, "Folder name must be at most 20 characters long")
     .regex(/^[a-zA-Z0-9 _-]+$/, "Folder name can only contain letters, numbers, spaces, hyphens, and underscores")
-});
-
-/* ================= FILES ================= */
-
-export const uploadFileSchema = z.object({
-    folderId: z.uuid().optional()
-});
-
-/* ================= OTP (future-safe) ================= */
-
-export const otpVerifySchema = z.object({
-    email: z.email(),
-    otp: z.string().length(6)
 });
