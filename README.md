@@ -34,6 +34,7 @@ WalDrive is a **production‑grade prototype cloud storage** inspired by systems
   * Centralized API response messages
   * Typed responses and request handling
   * Environment‑based configuration
+  * Request validation using Zod schemas
 
 ---
 
@@ -44,6 +45,7 @@ WalDrive is a **production‑grade prototype cloud storage** inspired by systems
 * **Runtime**: Node.js
 * **Language**: TypeScript (ES Modules)
 * **Framework**: Express.js
+* **Validation**: Zod (schema-based request validation)
 
 ### Database
 
@@ -111,10 +113,11 @@ npm start
 
 ## 🔐 Authentication Flow (High‑Level)
 
-1. User registers → password hashed with bcrypt
-2. User logs in → JWT issued
-3. JWT validated via middleware on protected routes
-4. Authenticated user can upload/manage files
+1. Incoming request validated using Zod schema
+2. User registers → password hashed with bcrypt
+3. User logs in → JWT issued
+4. JWT validated via middleware on protected routes
+5. Authenticated user can upload/manage files
 
 ---
 
@@ -143,6 +146,7 @@ Designed to support **deep nesting** and **future sharing features**.
 * Centralized response utilities
 * Consistent API response format
 * Explicit error messages per domain (auth, file, folder, user)
+* Early request rejection via Zod validation middleware
 
 ---
 
