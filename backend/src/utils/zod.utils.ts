@@ -1,8 +1,11 @@
 import { z } from "zod";
 
+
 // AUTH ZOD SCHEMAS
 export const signupSchema = z.object({
-    fullName: z.string().min(2, "Name must be at least 2 characters long"),
+    fullName: z.string()
+    .min(2, "Name must be at least 2 characters long")
+    .max(50, "Name must be at most 50 characters long"),
     email: z.email(),
     password: z.string()
     .min(8, "Password must be at least 8 characters long")
