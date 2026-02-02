@@ -8,7 +8,7 @@ const ApiResponseHandler = <T>(
     success: boolean,
     message?: string | null,
     data?: T | null,
-    error?: string
+    error?: T | null
 ) => {
     return res.status(statusCode).json({
         success,
@@ -25,14 +25,14 @@ export class ApiResponse {
         data?: T | null,
         statusCode: number = 200
     ): Response<ApiResponseBody<T>> {
-        return ApiResponseHandler<T>(res, statusCode, true, message, data);
+        return ApiResponseHandler<T>(res, statusCode, true, message, data, null);
     }
 
     static error<T>(
         res: Response, 
         statusCode: number, 
         message: string, 
-        error?: string
+        error?: T | null
     ): Response<ApiResponseBody<T>> {
         return ApiResponseHandler<T>(res, statusCode, false, message, null, error);
     }
