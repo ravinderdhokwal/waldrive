@@ -8,6 +8,8 @@ export class AUTH_MESSAGE {
 
     // Success Messages
     static readonly USER_SIGNED_UP = "User signed up successfully";
+    static readonly TOKEN_VALID = "Token is valid.";
+    static readonly SIGNED_OUT = "Signed out successfully.";
 }
 
 export class USER_MESSAGE {
