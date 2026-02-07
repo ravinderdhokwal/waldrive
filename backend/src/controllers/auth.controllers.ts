@@ -64,6 +64,38 @@ export const signIn = asyncHandler(async (req, res) => {
     });
 });
 
+export const verifyTokenHandler = asyncHandler(async (req, res) => {
+    return ApiResponse.success(res, AUTH_MESSAGE.TOKEN_VALID);
+});
+
+export const refreshToken = asyncHandler(async (req, res) => {
+    const user = req.user;
+
+    if (!user) {
+        return ApiResponse.error(res, 401, AUTH_MESSAGE.UNAUTHORIZED);
+    }
+
+    const accessToken = jwt.sign(
+        { id: user.id, verified: user.verified },
+        process.env.ACCESS_TOKEN_SECRET as string,
+        { expiresIn: "1h" }
+    );
+
+    const options: CookieOptions = {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+    }
+
+    return res.status(200)
+    .cookie("accessToken", accessToken, options)
+    .json({
+        success: true,
+        message: "Token refreshed",
+        accessToken
+    });
+});
+
 export const signOut = asyncHandler(async (req, res) => {
     const options: CookieOptions = {
         httpOnly: true,
