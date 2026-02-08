@@ -11,7 +11,8 @@ export const validate = (schema: z.ZodTypeAny) => (req: Request, res: Response, 
             message: issue.message
         }));
 
-        return ApiResponse.error(res, 400, "Validation Error", errors);
+        const error_message: string = errors[0]?.message || "Validation failed";
+        return ApiResponse.error(res, 400, error_message, errors);
     }
     
     next();
